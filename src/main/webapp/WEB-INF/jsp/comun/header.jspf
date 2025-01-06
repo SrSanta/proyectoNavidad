@@ -1,0 +1,64 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="org.tienda.model.Usuario" %>
+<%@ page import="java.util.Optional" %>
+
+<header style="width: 100%; background-color: #333; color: white; display: flex; flex-direction: column;">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+        <div style="font-size: 24px; font-weight: bold;">
+            <a href="<%= application.getContextPath() %>" style="text-decoration: none; color: white;">Tienda Figuras</a>
+        </div>
+
+        <div style="display: flex; align-items: center;">
+            <%
+                Optional<Usuario> usuarioLogado = Optional.ofNullable((Usuario) session.getAttribute("usuario-logado"));
+                if (usuarioLogado.isPresent()) {
+            %>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span>Hola, <%= usuarioLogado.get().getNombre() %></span>
+                <form action="<%= application.getContextPath() %>/tienda/usuarios/logout" method="post" style="margin: 0;">
+                    <input type="hidden" name="__method__" value="logout" />
+                    <button type="submit" style="cursor: pointer; font-size: 14px; padding: 5px 10px; background: #444; color: white; border: none;">
+                        Cerrar Sesion
+                    </button>
+                </form>
+            </div>
+            <%
+            } else {
+            %>
+            <div style="display: flex; gap: 15px;">
+                <a href="<%= application.getContextPath() %>/tienda/usuarios/login" style="text-decoration: none; color: white;">
+                    Iniciar Sesion
+                </a>
+                <a href="<%= application.getContextPath() %>/tienda/usuarios/crear" style="text-decoration: none; color: white;">
+                    Registrarse
+                </a>
+            </div>
+            <%
+                }
+            %>
+        </div>
+    </div>
+
+    <nav style="background-color: #444; padding: 10px;">
+        <ul style="list-style: none; display: flex; gap: 15px; padding: 0; margin: 0;">
+            <li><a href="<%= application.getContextPath() %>" style="text-decoration: none; color: white;">Inicio</a></li>
+            <li><a href="<%= application.getContextPath() %>/tienda/categorias" style="text-decoration: none; color: white;">Categorias</a></li>
+            <li><a href="<%= application.getContextPath() %>/productos" style="text-decoration: none; color: white;">Productos</a></li>
+
+            <%
+                boolean esAdmin = usuarioLogado.isPresent() && "Admin".equals(usuarioLogado.get().getRol());
+                if (usuarioLogado.isPresent()) {
+            %>
+            <li><a href="<%= application.getContextPath() %>/tienda/carrito" style="text-decoration: none; color: white;">Carrito</a></li>
+            <li><a href="<%= application.getContextPath() %>/tienda/historialpedidos" style="text-decoration: none; color: white;">Historial de Pedidos</a></li>
+            <%
+                }
+                if (esAdmin) {
+            %>
+            <li><a href="<%= application.getContextPath() %>/tienda/usuarios" style="text-decoration: none; color: white;">Usuarios</a></li>
+            <%
+                }
+            %>
+        </ul>
+    </nav>
+</header>
